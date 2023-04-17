@@ -1,0 +1,117 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #fafafa;
+  color: #212121;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+button {
+  min-width: 100px;
+  background: lightblue;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
+  border: 0px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.5;
+  cursor: pointer;
+  padding: 8px 24px;
+  transition: box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+button:hover,
+button:focus {
+  background: lightskyblue;
+}
+.search-form {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  max-width: 600px;
+  margin-bottom: 16px;
+}
+input {
+  border-radius: 4px;
+  padding: 8px 16px;
+  border: 2px solid lightblue;
+}
+input:focus {
+  border: 2px solid lightskyblue;
+  outline: none;
+}
+
+.gallery {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-bottom: 12px;
+  padding-top: 12px;
+}
+
+.photo-card {
+  max-width: 320px;
+  height: 300px;
+  box-shadow: 0px 1px 6px rgba(46, 47, 66, 0.08);
+}
+.photo-card:hover {
+  box-shadow: 0px 1px 6px rgba(46, 47, 66, 0.08),
+    0px 1px 1px rgba(46, 47, 66, 0.16), 0px 2px 1px rgba(46, 47, 66, 0.08);
+  cursor: pointer;
+}
+img {
+  display: block;
+  width: 320px;
+  height: 200px;
+  object-fit: contain;
+}
+.info {
+  display: flex;
+  text-align: center;
+}
+.info-item {
+  font-size: 14px;
+}
+/* .item {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.item-img {
+  width: 50px;
+  height: 30px;
+}
+.item-descr {
+  margin: 0;
+}
+
+.country-card {
+  display: flex;
+  gap: 20px;
+}
+.card-img {
+  width: 50px;
+  height: 50px;
+}
+.card-name {
+  margin: 0;
+  font-weight: 500;
+  font-size: 36px;
+}
+.card-descr {
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+.card-subtitle {
+  margin-right: 8px;
+  font-weight: 500;
+  font-size: 20px;
+} */
