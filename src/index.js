@@ -3,7 +3,10 @@ import axios from 'axios';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-const lightbox = new SimpleLightbox('.gallery a', {});
+let lightbox = new SimpleLightbox('.gallery a');
+function applySimpleLightbox() {
+  lightbox.on('show.simplelightbox', function () {});
+}
 
 const form = document.querySelector('.search-form');
 const input = document.querySelector('input');
@@ -40,6 +43,7 @@ const onSubmit = e => {
       }
       insertContent(response.data.hits);
       page += 1;
+      applySimpleLightbox();
     })
     .catch(error => console.log(error));
 };
@@ -67,7 +71,7 @@ const createPhotoCard = item => {
   return `
   <div class="photo-card">
   <a href = '${item.largeImageURL}'>
-    <img class = 'photo' src='${item.webformatURL}' alt="${item.tags}" loading="lazy" />
+    <img class = 'photo' src='${item.webformatURL}' alt="${item.tags}" loading="lazy" width = '320' height = '200'/>
     </a>
   <div class="info">
     <p class="info-item">
