@@ -3,11 +3,6 @@ import axios from 'axios';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-let lightbox = new SimpleLightbox('.gallery a');
-function applySimpleLightbox() {
-  lightbox.on('show.simplelightbox', function () {});
-}
-
 const form = document.querySelector('.search-form');
 const input = document.querySelector('input');
 const gallery = document.querySelector('.gallery');
@@ -23,7 +18,6 @@ const onSubmit = e => {
     .then(response => {
       const totalPages = Math.ceil(response.data?.totalHits / perPage);
       if (e.type === 'submit') {
-        lightbox.refresh();
         gallery.innerHTML = '';
         page = 1;
         if (response.data.hits.length === 0) {
@@ -43,7 +37,6 @@ const onSubmit = e => {
       }
       insertContent(response.data.hits);
       page += 1;
-      applySimpleLightbox();
     })
     .catch(error => console.log(error));
 };
@@ -71,7 +64,7 @@ const createPhotoCard = item => {
   return `
   <div class="photo-card">
   <a href = '${item.largeImageURL}'>
-    <img class = 'photo' src='${item.webformatURL}' alt="${item.tags}" loading="lazy" width = '320' height = '200'/>
+    <img class = 'photo' src='${item.webformatURL}' alt="${item.tags}" loading="lazy"/>
     </a>
   <div class="info">
     <p class="info-item">
@@ -96,7 +89,9 @@ const createPhotoCard = item => {
 
 const insertContent = array => {
   const result = array.reduce((acc, item) => acc + createPhotoCard(item), '');
-  return gallery.insertAdjacentHTML('beforeend', result);
+  gallery.insertAdjacentHTML('beforeend', result);
+  let lightbox = new SimpleLightbox('.gallery a');
+  lightbox.refresh();
 };
 
 buttonMore.classList.add('hide');
