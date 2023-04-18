@@ -1,4 +1,7 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+const axios = require('axios').default;
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const form = document.querySelector('.search-form');
 const input = document.querySelector('input');
@@ -7,27 +10,25 @@ const buttonMore = document.querySelector('.load-more');
 const KEY = '35495478-0f618b27834e323a3a3099cd4';
 const perPage = 40;
 let page = 1;
+const lightbox = new SimpleLightbox('.gallery a', {});
 
-buttonMore.classList.add('hide');
-
-form.addEventListener('submit', onSubmit);
-buttonMore.addEventListener('click', onSubmit);
-
-function onSubmit(e) {
+const onSubmit = e => {
   e.preventDefault();
   const name = input.value;
-  fetchImages(name)
-    .then(data => {
-      const totalPages = Math.ceil(data?.totalHits / perPage);
+  getImages(name)
+    .then(response => {
+      const totalPages = Math.ceil(response.data?.totalHits / perPage);
       if (e.type === 'submit') {
+        lightbox.refresh();
         gallery.innerHTML = '';
         page = 1;
-        if (data.hits.length === 0) {
+        if (response.data.hits.length === 0) {
+          buttonMore.classList.add('hide');
           Notify.failure(
             'Sorry, there are no images matching your search query. Please try again.'
           );
         } else {
-          Notify.success(`Hooray! We found ${data.totalHits} images`);
+          Notify.success(`Hooray! We found ${response.data.totalHits} images`);
           buttonMore.classList.remove('hide');
         }
       } else if (page >= totalPages) {
@@ -36,26 +37,37 @@ function onSubmit(e) {
           "We're sorry, but you've reached the end of search results."
         );
       }
-      insertContent(data.hits);
+      insertContent(response.data.hits);
       page += 1;
     })
     .catch(error => console.log(error));
-}
+};
 
-function fetchImages(name) {
-  return fetch(
-    `https://pixabay.com/api/?key=${KEY}&q=${name}&image_type=photo&orientation=horizontal&safesearch=true&per_page=${perPage}&page=${page}`
-  ).then(response => {
-    if (!response.ok) {
-      throw new Error(response.status);
-    }
-    return response.json();
-  });
-}
+const getImages = async name => {
+  try {
+    const response = await axios.get(`https://pixabay.com/api/`, {
+      params: {
+        key: `${KEY}`,
+        q: `${name}`,
+        image_type: 'photo',
+        orientation: 'horizontal',
+        safesearch: 'true',
+        per_page: `${perPage}`,
+        page: `${page}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-function createPhotoCard(item) {
-  return `<div class="photo-card">
-  <img src='${item.webformatURL}' alt="${item.tags}" loading="lazy" />
+const createPhotoCard = item => {
+  return `
+  <div class="photo-card">
+  <a href = '${item.largeImageURL}'>
+    <img class = 'photo' src='${item.webformatURL}' alt="${item.tags}" loading="lazy" />
+    </a>
   <div class="info">
     <p class="info-item">
       <b>Likes</b>
@@ -75,9 +87,22 @@ function createPhotoCard(item) {
     </p>
   </div>
 </div>`;
-}
+};
 
-function insertContent(array) {
+const insertContent = array => {
   const result = array.reduce((acc, item) => acc + createPhotoCard(item), '');
   return gallery.insertAdjacentHTML('beforeend', result);
-}
+};
+
+buttonMore.classList.add('hide');
+form.addEventListener('submit', onSubmit);
+buttonMore.addEventListener('click', onSubmit);
+
+// const { height: cardHeight } = document
+//   .querySelector('.gallery')
+//   .firstElementChild.getBoundingClientRect();
+
+// window.scrollBy({
+//   top: cardHeight * 2,
+//   behavior: 'smooth',
+// });
