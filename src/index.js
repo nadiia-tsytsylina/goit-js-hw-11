@@ -1,7 +1,9 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-const axios = require('axios').default;
-import SimpleLightbox from 'simplelightbox';
+import axios from 'axios';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import SimpleLightbox from 'simplelightbox';
+
+const lightbox = new SimpleLightbox('.gallery a', {});
 
 const form = document.querySelector('.search-form');
 const input = document.querySelector('input');
@@ -10,7 +12,6 @@ const buttonMore = document.querySelector('.load-more');
 const KEY = '35495478-0f618b27834e323a3a3099cd4';
 const perPage = 40;
 let page = 1;
-const lightbox = new SimpleLightbox('.gallery a', {});
 
 const onSubmit = e => {
   e.preventDefault();
