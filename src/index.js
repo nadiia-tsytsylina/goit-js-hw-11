@@ -13,7 +13,10 @@ let page = 1;
 
 const onSubmit = e => {
   e.preventDefault();
-  const name = input.value;
+  const name = input.value.trim();
+  if (name === '') {
+    return;
+  }
   getImages(name)
     .then(response => {
       const totalPages = Math.ceil(response.data?.totalHits / perPage);
@@ -29,7 +32,7 @@ const onSubmit = e => {
           Notify.success(`Hooray! We found ${response.data.totalHits} images`);
           buttonMore.classList.remove('hide');
         }
-      } else if (page >= totalPages) {
+      } else if (page >= totalPages || response.data.totalHits < perPage) {
         buttonMore.classList.add('hide');
         Notify.info(
           "We're sorry, but you've reached the end of search results."
@@ -65,44 +68,49 @@ const createPhotoCard = item => {
   <div class="photo-card">
   <a href = '${item.largeImageURL}'>
     <img class = 'photo' src='${item.webformatURL}' alt="${item.tags}" loading="lazy"/>
-    </a>
-  <div class="info">
+    <div class="info">
     <p class="info-item">
-      <b>Likes</b>
+      <b>Likes</b><br>
       ${item.likes}
     </p>
     <p class="info-item">
-      <b>Views</b>
+      <b>Views</b><br>
       ${item.views}
     </p>
     <p class="info-item">
-      <b>Comments</b>
+      <b>Comments</b><br>
       ${item.comments}
     </p>
     <p class="info-item">
-      <b>Downloads</b>
+      <b>Downloads</b><br>
       ${item.downloads}
     </p>
   </div>
+    </a>
 </div>`;
 };
 
 const insertContent = array => {
   const result = array.reduce((acc, item) => acc + createPhotoCard(item), '');
   gallery.insertAdjacentHTML('beforeend', result);
+
   let lightbox = new SimpleLightbox('.gallery a');
   lightbox.refresh();
+
+  smoothScroll();
 };
 
+function smoothScroll() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+  console.log({ height: cardHeight });
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
+}
 buttonMore.classList.add('hide');
 form.addEventListener('submit', onSubmit);
 buttonMore.addEventListener('click', onSubmit);
-
-// const { height: cardHeight } = document
-//   .querySelector('.gallery')
-//   .firstElementChild.getBoundingClientRect();
-
-// window.scrollBy({
-//   top: cardHeight * 2,
-//   behavior: 'smooth',
-// });
