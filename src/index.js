@@ -40,6 +40,7 @@ const onSubmit = e => {
       }
       insertContent(response.data.hits);
       page += 1;
+      smoothScroll();
     })
     .catch(error => console.log(error));
 };
@@ -96,18 +97,15 @@ const insertContent = array => {
 
   let lightbox = new SimpleLightbox('.gallery a');
   lightbox.refresh();
-
-  smoothScroll();
 };
 
 function smoothScroll() {
   const { height: cardHeight } = document
     .querySelector('.gallery')
     .firstElementChild.getBoundingClientRect();
-  console.log({ height: cardHeight });
 
   window.scrollBy({
-    top: cardHeight * 2,
+    top: cardHeight * 1.7,
     behavior: 'smooth',
   });
 }
