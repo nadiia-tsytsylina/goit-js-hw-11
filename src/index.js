@@ -111,6 +111,6 @@ function smoothScroll() {
     behavior: 'smooth',
   });
 }
-buttonMore.classList.add('hide');
+
 form.addEventListener('submit', onSubmit);
 buttonMore.addEventListener('click', onSubmit);
