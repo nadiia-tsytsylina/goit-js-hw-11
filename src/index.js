@@ -2,6 +2,15 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import axios from 'axios';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+// import InfiniteScroll from 'infinite-scroll';
+
+// let elem = document.querySelector('.container');
+// let infScroll = new InfiniteScroll(elem, {
+//   // options
+//   // path: '.pagination__next',
+//   // append: '.post',
+//   // history: false,
+// });
 
 const form = document.querySelector('.search-form');
 const input = document.querySelector('input');
@@ -39,8 +48,10 @@ const onSubmit = e => {
         );
       }
       insertContent(response.data.hits);
+      if (page > 1) {
+        smoothScroll();
+      }
       page += 1;
-      smoothScroll();
     })
     .catch(error => console.log(error));
 };
@@ -66,6 +77,7 @@ const getImages = async name => {
 
 const createPhotoCard = item => {
   return `
+  <article class="post">
   <div class="photo-card">
   <a href = '${item.largeImageURL}'>
     <img class = 'photo' src='${item.webformatURL}' alt="${item.tags}" loading="lazy"/>
@@ -88,7 +100,9 @@ const createPhotoCard = item => {
     </p>
   </div>
     </a>
-</div>`;
+</div>
+  </article>
+  `;
 };
 
 const insertContent = array => {
