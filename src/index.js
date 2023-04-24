@@ -90,7 +90,6 @@ const onSearch = async e => {
 const onEntry = entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting && galleryApiService.name !== '') {
-      console.log('пересечение');
       galleryApiService
         .getImages()
         .then(response => {
