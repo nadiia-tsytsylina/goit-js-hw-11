@@ -1,21 +1,13 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import GalleryApiService from './js/gallery-API';
 import { insertContent } from './js/insert-content';
-// import InfiniteScroll from 'infinite-scroll';
-
-// let elem = document.querySelector('.container');
-// let infScroll = new InfiniteScroll(elem, {
-//   // options
-//   // path: '.pagination__next',
-//   // append: '.post',
-//   // history: false,
-// });
 
 const galleryApiService = new GalleryApiService();
 const form = document.querySelector('.search-form');
 const input = document.querySelector('input');
 const gallery = document.querySelector('.gallery');
-const buttonMore = document.querySelector('.load-more');
+const endOfGallery = document.querySelector('.end');
+// const buttonMore = document.querySelector('.load-more');
 
 const onSearch = async e => {
   e.preventDefault();
@@ -35,7 +27,8 @@ const onSearch = async e => {
     );
 
     if (response.data.hits.length === 0) {
-      hideButton(buttonMore);
+      // addHideClass(buttonMore);
+      observer.unobserve(endOfGallery);
       Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
@@ -43,11 +36,13 @@ const onSearch = async e => {
       galleryApiService.page > galleryApiService.totalPages ||
       response.data.totalHits < galleryApiService.perPage
     ) {
-      hideButton(buttonMore);
+      // addHideClass(buttonMore);
+      observer.unobserve(endOfGallery);
       Notify.info("We're sorry, but you've reached the end of search results.");
     } else {
       Notify.success(`Hooray! We found ${response.data.totalHits} images`);
-      buttonMore.classList.remove('hide');
+      // buttonMore.classList.remove('hide');
+      observer.observe(endOfGallery);
     }
 
     insertContent(response.data.hits);
@@ -56,38 +51,70 @@ const onSearch = async e => {
   }
 };
 
-const onLoadMore = async () => {
-  try {
-    const response = await galleryApiService.getImages();
+// функция для события на кнопку load more
+// const onLoadMore = async () => {
+//   try {
+//     const response = await galleryApiService.getImages();
 
-    if (
-      galleryApiService.page > galleryApiService.totalPages ||
-      response.data.totalHits < galleryApiService.perPage
-    ) {
-      hideButton(buttonMore);
-      Notify.info("We're sorry, but you've reached the end of search results.");
+//     if (
+//       galleryApiService.page > galleryApiService.totalPages ||
+//       response.data.totalHits < galleryApiService.perPage
+//     ) {
+//       addHideClass(buttonMore);
+//       Notify.info("We're sorry, but you've reached the end of search results.");
+//     }
+//     insertContent(response.data.hits);
+//     smoothScroll();
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+// Функция плавного скролла для кнопки load more
+// function smoothScroll() {
+//   const { height: cardHeight } = document
+//     .querySelector('.gallery')
+//     .firstElementChild.getBoundingClientRect();
+
+//   window.scrollBy({
+//     top: cardHeight * 1.7,
+//     behavior: 'smooth',
+//   });
+// }
+
+// функция для кнопки load more
+// function addHideClass(elem) {
+//   elem.classList.add('hide');
+// }
+
+const onEntry = entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && galleryApiService.name !== '') {
+      console.log('пересечение');
+      galleryApiService
+        .getImages()
+        .then(response => {
+          if (
+            galleryApiService.page > galleryApiService.totalPages ||
+            response.data.totalHits < galleryApiService.perPage
+          ) {
+            observer.unobserve(endOfGallery);
+            Notify.info(
+              "We're sorry, but you've reached the end of search results."
+            );
+          }
+          insertContent(response.data.hits);
+        })
+        .catch(error => console.log(error));
     }
-    insertContent(response.data.hits);
-    smoothScroll();
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-function smoothScroll() {
-  const { height: cardHeight } = document
-    .querySelector('.gallery')
-    .firstElementChild.getBoundingClientRect();
-
-  window.scrollBy({
-    top: cardHeight * 1.7,
-    behavior: 'smooth',
   });
-}
+};
 
-function hideButton(button) {
-  button.classList.add('hide');
-}
+const observerOptions = {
+  rootMargin: '300px',
+};
+
+const observer = new IntersectionObserver(onEntry, observerOptions);
 
 form.addEventListener('submit', onSearch);
-buttonMore.addEventListener('click', onLoadMore);
+// buttonMore.addEventListener('click', onLoadMore);
