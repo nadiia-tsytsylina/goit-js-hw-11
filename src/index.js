@@ -21,6 +21,7 @@ const onSearch = async e => {
   try {
     const response = await galleryApiService.getImages();
     gallery.innerHTML = '';
+    smoothScroll();
 
     galleryApiService.totalPages = Math.ceil(
       response.data?.totalHits / response.config.params.per_page
@@ -86,6 +87,14 @@ const onSearch = async e => {
 // function addHideClass(elem) {
 //   elem.classList.add('hide');
 // }
+
+function smoothScroll() {
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'smooth',
+  });
+}
 
 const onEntry = entries => {
   entries.forEach(entry => {
